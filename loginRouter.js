@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const router = express.Router();
 router.use(bodyParser.json());
 
-const validateEmail = (req, res, next) => {
+const emailValidation = (req, res, next) => {
   const { email } = req.body;
   const emailRegex = /^\w+(\[\+\.-\]?\w)*@\w+(\[\.-\]?\w+)*\.[a-z]+$/i;
 
@@ -17,7 +17,7 @@ const validateEmail = (req, res, next) => {
   next();
 };
 
-const validatePassword = (req, res, next) => {
+const passwordValidation = (req, res, next) => {
   const { password } = req.body;
 
   if (!password) return res.status(400).json({ message: 'O campo "password" é obrigatório' });
@@ -28,7 +28,7 @@ const validatePassword = (req, res, next) => {
   next();
 };
 
-router.post('/', validateEmail, validatePassword, (_req, res) => {
+router.post('/', emailValidation, passwordValidation, (_req, res) => {
   const generateToken = () => crypto.randomBytes(8).toString('hex');
 
   res.status(200).json({ token: generateToken() });
