@@ -1,5 +1,6 @@
 const express = require('express');
 const fs = require('fs').promises;
+const auth = require('./auth-middleware');
 
 const talkerFile = 'talker.json';
 
@@ -18,6 +19,14 @@ router.get('/', async (_req, res) => {
   res.status(200).json(talkerList);
 });
 
+router.get('/search', auth.authorizationMiddleware, async (req, res) => {
+  const { q } = req.query;
+  const talkerList = await getTalker();
+  const filteredList = talkerList.filter((t) => t.name.includes(q));
+
+  res.status(200).json(filteredList);
+});
+
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
   const talkerList = await getTalker();
@@ -27,8 +36,6 @@ router.get('/:id', async (req, res) => {
 
   res.status(200).json(talker);
 });
-
-const auth = require('./auth-middleware');
 
 router.use(auth.authorizationMiddleware);
 
